@@ -1021,7 +1021,7 @@ Which of the following is true regarding these processors cost? (Select the corr
   By inspection, since `R2` set to `0` corresponds to the branch `Else`, this corresponds to `P1`; correspondingly, the other ("then") branch corresponds to `P2`.
   
   Regarding the critical threshold for accuracy:
-* Post-conversion, there are `3` instructions, requiring `0.5*3 + 0.5*3 = 1.5` cycles (assuming other things are performed in the rest of the cycle)
+* Post-conversion, there are `3` instructions, requiring `0.5*3 = 1.5` cycles (assuming other things are performed in the rest of the cycle)
 * Pre-conversion, there are `3` instructions in the then path and `2` instructions in the `Else` path, therefore (assuming no bias) this requires `2.5` cycles on average, and additionally factoring in the CPI this yields `2.5 * 0.5 = 1.25` cycles.
   
   Critically, these two schemes perform equally when the cost of mispredictions is `1.5 - 1.25 = 0.25` cycles per branch (i.e., this net loss can be incurred on average in the critical case). Since the misprediction penalty is `10` cycles, this implies a critical misprediction rate of `(0.25 cycles/branch)/(10 cycles) = 1/40` (i.e., 1 in 40 branches mispredicted, or `2.5%`). Therefore, the critical threshold is `1 - 0.025 = 0.975` (`97.5%`), i.e., the correct prediction rate must be at least 97.5% to avoid performing the if conversion via full predication.
