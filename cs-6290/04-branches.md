@@ -251,9 +251,9 @@ To explore this question, consider the following comparisons:
 
 | Pipeline | Branch Instruction Resolution | Misprediction Penalty | CPI for "Not-Taken" Predictor (88% Accuracy) | CPI for Better Predictor (99% Accuracy) | Speedup |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 5-Stage | Stage `3` | `2` cycles | `1 + 0.12*2 = 1.24` | `1 + 0.01*2 = 1.02` | `1.24/1.02 = 1.22` |
-| 14-Stage | Stage `11` | `10` cycles | `1 + 0.12*10 = 2.2` | `1 + 0.01*10 = 1.1` | `2.2/1.1 = 2.0` |
-| 14-Stage, executing `4` instructions/cycle* | Stage `11` | `4*10 = 40` cycles | `0.25 + 0.12*10 = 1.45`** | `0.25 + 0.01*10 = 0.35`** | `1.45/0.35 = 4.14` |
+| 5-Stage | Stage `3` | `2` instructions | `1 + 0.12*2 = 1.24` | `1 + 0.01*2 = 1.02` | `1.24/1.02 = 1.22` |
+| 14-Stage | Stage `11` | `10` instructions | `1 + 0.12*10 = 2.2` | `1 + 0.01*10 = 1.1` | `2.2/1.1 = 2.0` |
+| 14-Stage, executing `4` instructions/cycle* | Stage `11` | `4*10 = 40` instructions | `0.25 + 0.12*10 = 1.45`** | `0.25 + 0.01*10 = 0.35`** | `1.45/0.35 = 4.14` |
   * ****N.B.*** This pipeline is most representative of a modern processor.
   * *****N.B.*** The ideal CPI for this pipeline is `1/4 = 0.25`, since it executes `4` (i.e., `> 1`) instructions/cycle.
 
@@ -299,9 +299,9 @@ Additionally, another consideration for why better prediction is useful is to ex
 
 | Pipeline | Branch Instruction Resolution | Misprediction Penalty |
 |:---:|:---:|:---:|
-| 5-Stage | Stage `3` | `2` cycles | 
-| 14-Stage | Stage `11` | `10` cycles |
-| 14-Stage, executing `4` instructions/cycle | Stage `11` | `4*10 = 40` cycles |
+| 5-Stage | Stage `3` | `2` instructions | 
+| 14-Stage | Stage `11` | `10` instructions |
+| 14-Stage, executing `4` instructions/cycle | Stage `11` | `4*10 = 40` instructions |
 
 In particular, for a parallel processor (executing `instructions/cycle > 1`), this can lead to ***many*** wasted cycles. Therefore, correct branch prediction is even more consequential in such systems.
 
@@ -490,7 +490,7 @@ There are `16` entries in the BHT, which can be accessed via the offset least-si
 | `0xC018` (`1100 0000 00\|01 10\|00`) | `6` |
 | `0xC01C` (`1100 0000 00\|01 11\|00`) | `7` |
 
-***N.B.*** If `15` were reached in this manner, the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
+***N.B.*** If `15` were reached in this manner (i.e., `...|11 11|00`), the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
 
 ### 19. Quiz 3 and Answers
 
@@ -515,7 +515,7 @@ How many times do we access the branch target buffer (BTB) table for each instru
 
 The BTB table is only accessed if the branch history table (BHT) indicates to take the branch (recall that we assume both tables predict perfectly); otherwise, if the branch is *not* taken, then we simply increment the program counter (PC) without accessing the BTB table at all.
 
-Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
+Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction address `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
 
 ### 20. Quiz 4 and Answers
 
